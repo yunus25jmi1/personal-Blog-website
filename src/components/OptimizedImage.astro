@@ -1,0 +1,183 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  priority?: boolean;
+  sizes?: string;
+  quality?: number;
+  format?: 'webp' | 'avif' | 'png' | 'jpg';
+  aspectRatio?: string;
+  placeholder?: 'blur' | 'empty';
+  decoding?: 'async' | 'sync' | 'auto';
+  preload?: boolean;
+}
+
+const {
+  src,
+  alt,
+  width = 800,
+  height = 600,
+  class: className = '',
+  loading = 'lazy',
+  priority = false,
+  sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
+  quality = 80,
+  format = 'webp',
+  aspectRatio,
+  placeholder = 'empty',
+  decoding = 'async',
+  preload = false,
+  ...rest
+} = Astro.props;
+
+// Generate responsive image sizes for better performance
+const responsiveWidths = [320, 640, 768, 1024, 1280, 1536];
+const aspectRatioValue = aspectRatio || `${width}/${height}`;
+
+// Determine loading strategy based on priority
+const imageLoading = priority ? 'eager' : loading;
+const fetchPriority = priority ? 'high' : 'auto';
+
+// Generate optimized sizes attribute for better responsive behavior
+const optimizedSizes = sizes || (() => {
+  if (width <= 400) return '(max-width: 640px) 100vw, 400px';
+  if (width <= 800) return '(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 800px';
+  return '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw';
+})();
+
+// Create a low-quality placeholder for blur effect
+const shouldShowPlaceholder = placeholder === 'blur' && !priority;
+
+// Generate preload link if needed
+const shouldPreload = priority || preload;
+---
+
+<!-- Preload critical images -->
+{shouldPreload && (
+  <link 
+    rel="preload" 
+    as="image" 
+    href={src}
+    imagesizes={optimizedSizes}
+    fetchpriority="high"
+  />
+)}
+
+<div 
+  class={`relative overflow-hidden ${className}`}
+  style={aspectRatio ? `aspect-ratio: ${aspectRatioValue}` : undefined}
+>
+  {shouldShowPlaceholder && (
+    <div 
+      class="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse image-placeholder"
+      aria-hidden="true"
+    />
+  )}
+  
+  <Image
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    class={`w-full h-full object-cover transition-opacity duration-300 ${shouldShowPlaceholder ? 'opacity-0' : 'opacity-100'}`}
+    loading={imageLoading}
+    fetchpriority={fetchPriority}
+    sizes={optimizedSizes}
+    quality={quality}
+    format={format}
+    decoding={decoding}
+    widths={responsiveWidths}
+    data-placeholder={placeholder}
+    {...rest}
+  />
+</div>
+
+<script>
+  // Enhanced image loading optimization
+  document.addEventListener('DOMContentLoaded', () => {
+    // Handle placeholder removal for blur effect
+    const images = document.querySelectorAll('img[data-placeholder="blur"]') as NodeListOf<HTMLImageElement>;
+    images.forEach((img) => {
+      const handleImageLoad = () => {
+        img.classList.remove('opacity-0');
+        img.classList.add('opacity-100');
+        
+        // Remove placeholder with smooth transition
+        const placeholder = img.parentElement?.querySelector('.image-placeholder') as HTMLElement;
+        if (placeholder) {
+          placeholder.style.transition = 'opacity 300ms ease-out';
+          placeholder.style.opacity = '0';
+          setTimeout(() => placeholder.remove(), 300);
+        }
+      };
+      
+      // If image is already loaded
+      if (img.complete && img.naturalHeight !== 0) {
+        handleImageLoad();
+      } else {
+        img.addEventListener('load', handleImageLoad, { once: true });
+      }
+      
+      // Handle loading errors
+      img.addEventListener('error', () => {
+        console.warn('Failed to load image:', img.src);
+        const placeholder = img.parentElement?.querySelector('.image-placeholder') as HTMLElement;
+        if (placeholder) {
+          placeholder.innerHTML = '<div class="flex items-center justify-center h-full text-gray-400"><svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" /></svg></div>';
+        }
+      }, { once: true });
+    });
+    
+    // Optimize images without explicit loading attribute
+    const lazyImages = document.querySelectorAll('img:not([loading])') as NodeListOf<HTMLImageElement>;
+    lazyImages.forEach((img) => {
+      // Add lazy loading to below-the-fold images
+      const rect = img.getBoundingClientRect();
+      if (rect.top > window.innerHeight) {
+        img.loading = 'lazy';
+      }
+      
+      // Add async decoding for better performance
+      if (!img.hasAttribute('decoding')) {
+        img.decoding = 'async';
+      }
+    });
+    
+    // Setup intersection observer for advanced lazy loading
+    if ('IntersectionObserver' in window) {
+      const imageObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const img = entry.target as HTMLImageElement;
+            
+            // Trigger loading for data-src images
+            if (img.dataset['src']) {
+              img.src = img.dataset['src'];
+              img.removeAttribute('data-src');
+            }
+            
+            // Add loaded class for styling
+            img.classList.add('image-loaded');
+            
+            // Stop observing
+            imageObserver.unobserve(img);
+          }
+        });
+      }, {
+        rootMargin: '50px 0px',
+        threshold: 0.01
+      });
+      
+      // Observe images with data-src
+      document.querySelectorAll('img[data-src]').forEach((img) => {
+        imageObserver.observe(img);
+      });
+    }
+  });
+</script>

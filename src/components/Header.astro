@@ -1,0 +1,272 @@
+---
+import { SITE_CONFIG } from '@/config/site';
+import type { NavItem } from '@/types';
+
+// Navigation items - can be extended as needed
+const navItems: NavItem[] = [
+  { label: 'Home', href: '/' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'About', href: '/about' },
+];
+
+// Get current path for active link highlighting
+const currentPath = Astro.url.pathname;
+
+// Security: Sanitize navigation items
+const sanitizedNavItems = navItems.filter(item => 
+  item.href.startsWith('/') || item.href.startsWith('http')
+);
+---
+
+<header class="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-sm border-b border-primary-200 shadow-sm">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <!-- Logo/Brand -->
+      <div class="flex-shrink-0">
+        <a 
+          href="/" 
+          class="flex items-center space-x-2 text-xl font-bold text-primary-900 hover:text-accent-600 transition-colors duration-200"
+          aria-label={`${SITE_CONFIG.title} - Home`}
+        >
+          <!-- Logo icon (can be replaced with actual logo) -->
+          <svg 
+            class="w-8 h-8 text-accent-600" 
+            fill="currentColor" 
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+          <span class="hidden sm:block">{SITE_CONFIG.title}</span>
+        </a>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center space-x-8" aria-label="Main navigation">
+        {sanitizedNavItems.map((item) => (
+          <a
+            href={item.href}
+            class={`nav-link ${currentPath === item.href ? 'active' : ''}`}
+            {...(item.external && { 
+              target: '_blank', 
+              rel: 'noopener noreferrer',
+              'aria-label': `${item.label} (opens in new tab)`
+            })}
+          >
+            {item.label}
+            {item.external && (
+              <svg class="inline w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
+                <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
+              </svg>
+            )}
+          </a>
+        ))}
+      </nav>
+
+      <!-- Mobile menu button -->
+      <div class="md:hidden">
+        <button
+          type="button"
+          class="mobile-menu-button inline-flex items-center justify-center p-2 rounded-md text-primary-700 hover:text-accent-600 hover:bg-primary-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-accent-500 transition-colors duration-200"
+          aria-controls="mobile-menu"
+          aria-expanded="false"
+          aria-label="Toggle main menu"
+        >
+          <span class="sr-only">Open main menu</span>
+          <!-- Hamburger icon -->
+          <svg 
+            class="hamburger-icon block h-6 w-6" 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <!-- Close icon -->
+          <svg 
+            class="close-icon hidden h-6 w-6" 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Menu -->
+    <div class="mobile-menu hidden md:hidden" id="mobile-menu">
+      <div class="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-primary-200">
+        {sanitizedNavItems.map((item) => (
+          <a
+            href={item.href}
+            class={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
+              currentPath === item.href 
+                ? 'text-accent-600 bg-accent-50' 
+                : 'text-primary-700 hover:text-accent-600 hover:bg-primary-50'
+            }`}
+            {...(item.external && { 
+              target: '_blank', 
+              rel: 'noopener noreferrer',
+              'aria-label': `${item.label} (opens in new tab)`
+            })}
+          >
+            {item.label}
+            {item.external && (
+              <svg class="inline w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
+                <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
+              </svg>
+            )}
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Mobile menu functionality with security considerations
+  document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuButton = document.querySelector('.mobile-menu-button') as HTMLButtonElement | null;
+    const mobileMenu = document.querySelector('.mobile-menu') as HTMLElement | null;
+    const hamburgerIcon = document.querySelector('.hamburger-icon') as HTMLElement | null;
+    const closeIcon = document.querySelector('.close-icon') as HTMLElement | null;
+    
+    if (!mobileMenuButton || !mobileMenu || !hamburgerIcon || !closeIcon) {
+      return; // Security: Exit if elements don't exist
+    }
+    
+    let isMenuOpen = false;
+    
+    // Toggle mobile menu
+    function toggleMobileMenu() {
+      isMenuOpen = !isMenuOpen;
+      
+      // Update ARIA attributes for accessibility
+      mobileMenuButton!.setAttribute('aria-expanded', isMenuOpen.toString());
+      
+      // Toggle menu visibility
+      if (isMenuOpen) {
+        mobileMenu!.classList.remove('hidden');
+        hamburgerIcon!.classList.add('hidden');
+        closeIcon!.classList.remove('hidden');
+        // Security: Prevent body scroll when menu is open
+        document.body.style.overflow = 'hidden';
+      } else {
+        mobileMenu!.classList.add('hidden');
+        hamburgerIcon!.classList.remove('hidden');
+        closeIcon!.classList.add('hidden');
+        // Restore body scroll
+        document.body.style.overflow = '';
+      }
+    }
+    
+    // Event listeners
+    mobileMenuButton.addEventListener('click', toggleMobileMenu);
+    
+    // Close menu when clicking on a link
+    const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+    mobileMenuLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        if (isMenuOpen) {
+          toggleMobileMenu();
+        }
+      });
+    });
+    
+    // Close menu on escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape' && isMenuOpen) {
+        toggleMobileMenu();
+      }
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(event) {
+      const target = event.target as Element;
+      if (isMenuOpen && !mobileMenuButton.contains(target) && !mobileMenu.contains(target)) {
+        toggleMobileMenu();
+      }
+    });
+    
+    // Handle window resize - close mobile menu on desktop
+    window.addEventListener('resize', function() {
+      if (window.innerWidth >= 768 && isMenuOpen) {
+        toggleMobileMenu();
+      }
+    });
+  });
+</script>
+
+<style>
+  /* Additional header-specific styles */
+  .mobile-menu {
+    animation: slideDown 0.2s ease-out;
+  }
+  
+  .mobile-menu.hidden {
+    animation: slideUp 0.2s ease-in;
+  }
+  
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+  }
+  
+  /* Smooth backdrop blur effect */
+  header {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  
+  /* Focus styles for better accessibility */
+  .mobile-menu-button:focus {
+    outline: 2px solid theme('colors.accent.500');
+    outline-offset: 2px;
+  }
+  
+  /* Hover effects for desktop navigation */
+  @media (min-width: 768px) {
+    .nav-link {
+      position: relative;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: theme('colors.accent.600');
+      transition: width 0.2s ease-in-out;
+    }
+    
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+  }
+</style>

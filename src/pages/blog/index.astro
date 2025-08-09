@@ -1,0 +1,124 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import BlogCard from '@/components/BlogCard.astro';
+
+// Get all published blog posts, sorted by date (newest first)
+const blogPosts = await getCollection('blog', ({ data }) => {
+  return !data.draft;
+}).then(posts => 
+  posts.sort((a, b) => 
+    new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime()
+  )
+);
+
+// SEO data for the blog listing page
+const pageTitle = 'Blog';
+const pageDescription = 'Read the latest articles about web development, programming, and technology.';
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  type="website"
+>
+  <Header />
+  
+  <main id="main-content" class="flex-1">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Page Header -->
+      <header class="text-center mb-12">
+        <h1 class="text-4xl sm:text-5xl font-bold text-primary-900 mb-4">
+          Blog
+        </h1>
+        <p class="text-lg sm:text-xl text-primary-600 max-w-2xl mx-auto">
+          Thoughts, tutorials, and insights about web development, programming, and technology.
+        </p>
+      </header>
+
+      <!-- Blog Posts Grid -->
+      {blogPosts.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {blogPosts.map((post) => (
+            <BlogCard post={post} />
+          ))}
+        </div>
+      ) : (
+        <!-- Empty State -->
+        <div class="text-center py-16">
+          <svg 
+            class="w-16 h-16 text-primary-400 mx-auto mb-4" 
+            fill="currentColor" 
+            viewBox="0 0 20 20"
+            aria-hidden="true"
+          >
+            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+          </svg>
+          <h2 class="text-2xl font-semibold text-primary-900 mb-2">
+            No blog posts yet
+          </h2>
+          <p class="text-primary-600 mb-6">
+            Check back soon for new articles and insights.
+          </p>
+          <a
+            href="/"
+            class="inline-flex items-center px-6 py-3 bg-accent-600 text-white rounded-md hover:bg-accent-700 transition-colors duration-200 font-medium"
+          >
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+            </svg>
+            Back to Home
+          </a>
+        </div>
+      )}
+
+      <!-- Pagination (for future implementation) -->
+      <!-- This can be added later when there are many blog posts -->
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  /* Blog listing specific styles */
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .blog-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+  
+  /* Smooth animations for blog cards */
+  .blog-grid > * {
+    animation: fadeInUp 0.6s ease-out;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Stagger animation for multiple cards */
+  .blog-grid > *:nth-child(1) { animation-delay: 0.1s; }
+  .blog-grid > *:nth-child(2) { animation-delay: 0.2s; }
+  .blog-grid > *:nth-child(3) { animation-delay: 0.3s; }
+  .blog-grid > *:nth-child(4) { animation-delay: 0.4s; }
+  .blog-grid > *:nth-child(5) { animation-delay: 0.5s; }
+  .blog-grid > *:nth-child(6) { animation-delay: 0.6s; }
+</style>

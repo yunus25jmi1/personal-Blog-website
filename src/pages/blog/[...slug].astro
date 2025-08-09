@@ -1,0 +1,38 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BlogLayout from '@/layouts/BlogLayout.astro';
+
+export async function getStaticPaths() {
+  // Get all published blog posts
+  const blogPosts = await getCollection('blog', ({ data }) => {
+    return !data.draft;
+  });
+
+  // Generate paths for each blog post
+  return blogPosts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+export interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+
+// Handle case where post doesn't exist (shouldn't happen with getStaticPaths, but good for safety)
+if (!post) {
+  return Astro.redirect('/404');
+}
+
+// Render the blog post content
+const { Content } = await post.render();
+
+// Get the raw content for reading time calculation
+const rawContent = post.body;
+---
+
+<BlogLayout post={post} content={rawContent}>
+  <Content />
+</BlogLayout>

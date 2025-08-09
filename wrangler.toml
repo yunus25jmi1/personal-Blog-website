@@ -1,0 +1,22 @@
+# Cloudflare Pages configuration (optional)
+# This file is used for advanced Cloudflare Pages features
+
+name = "personal-blog-website"
+compatibility_date = "2024-01-01"
+
+[build]
+command = "npm run build:ci"
+cwd = "."
+watch_dir = "src"
+
+[build.upload]
+format = "modules"
+dir = "dist"
+main = "./index.js"
+
+# Environment variables (if needed)
+[env.production.vars]
+# Add production environment variables here
+
+[env.preview.vars]
+# Add preview environment variables here

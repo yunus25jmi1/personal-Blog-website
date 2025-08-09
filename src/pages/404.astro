@@ -1,0 +1,275 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+
+// SEO data for 404 page
+const pageTitle = '404 - Page Not Found';
+const pageDescription = 'The page you are looking for could not be found.';
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  type="website"
+>
+  <Header />
+  
+  <main id="main-content" class="flex-1 flex items-center justify-center">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+      <!-- 404 Illustration -->
+      <div class="mb-8">
+        <svg 
+          class="w-32 h-32 text-primary-300 mx-auto mb-6" 
+          fill="currentColor" 
+          viewBox="0 0 20 20"
+          aria-hidden="true"
+        >
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+        </svg>
+        
+        <!-- Large 404 Text -->
+        <h1 class="text-6xl sm:text-8xl font-bold text-primary-900 mb-4">
+          404
+        </h1>
+      </div>
+
+      <!-- Error Message -->
+      <div class="max-w-md mx-auto mb-8">
+        <h2 class="text-2xl sm:text-3xl font-semibold text-primary-900 mb-4">
+          Page Not Found
+        </h2>
+        <p class="text-lg text-primary-600 leading-relaxed">
+          Sorry, we couldn't find the page you're looking for. The page may have been moved, deleted, or the URL might be incorrect.
+        </p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <!-- Go Back Button -->
+        <button
+          onclick="history.back()"
+          class="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors duration-200 font-medium"
+        >
+          <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+          </svg>
+          Go Back
+        </button>
+
+        <!-- Home Button -->
+        <a
+          href="/"
+          class="inline-flex items-center px-6 py-3 bg-accent-600 text-white rounded-md hover:bg-accent-700 transition-colors duration-200 font-medium"
+        >
+          <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+          </svg>
+          Go Home
+        </a>
+
+        <!-- Blog Button -->
+        <a
+          href="/blog"
+          class="inline-flex items-center px-6 py-3 border border-primary-300 text-primary-700 rounded-md hover:bg-primary-50 transition-colors duration-200 font-medium"
+        >
+          <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+          </svg>
+          Browse Blog
+        </a>
+      </div>
+
+      <!-- Search Suggestion -->
+      <div class="mt-12 max-w-md mx-auto">
+        <p class="text-sm text-primary-500 mb-4">
+          Looking for something specific? Try searching:
+        </p>
+        <form 
+          action="/search" 
+          method="get"
+          class="flex gap-2"
+          role="search"
+          aria-label="Search the site"
+        >
+          <input
+            type="search"
+            name="q"
+            placeholder="Search articles..."
+            class="flex-1 px-4 py-2 border border-primary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+            aria-label="Search query"
+          />
+          <button
+            type="submit"
+            class="px-4 py-2 bg-accent-600 text-white rounded-md hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 transition-colors duration-200"
+            aria-label="Search"
+          >
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </form>
+      </div>
+
+      <!-- Popular Links -->
+      <div class="mt-12">
+        <p class="text-sm text-primary-500 mb-4">
+          Or check out these popular pages:
+        </p>
+        <div class="flex flex-wrap justify-center gap-4 text-sm">
+          <a href="/blog" class="text-accent-600 hover:text-accent-700 underline">
+            Latest Articles
+          </a>
+          <a href="/about" class="text-accent-600 hover:text-accent-700 underline">
+            About
+          </a>
+          <a href="/contact" class="text-accent-600 hover:text-accent-700 underline">
+            Contact
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<script is:inline>
+  // Enhanced 404 page functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    // Track 404 errors for analytics (if implemented)
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'page_view', {
+        page_title: '404 - Page Not Found',
+        page_location: window.location.href,
+        custom_map: { 'custom_parameter_1': 'error_page' }
+      });
+    }
+
+    // Log 404 error for debugging in development
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      console.warn('404 Error - Page not found:', window.location.href);
+    }
+
+    // Auto-focus search input for better UX
+    const searchInput = document.querySelector('input[type="search"]');
+    if (searchInput) {
+      // Small delay to ensure page is fully loaded
+      setTimeout(() => {
+        if (searchInput instanceof HTMLInputElement) {
+          searchInput.focus();
+        }
+      }, 500);
+    }
+
+    // Handle search form submission
+    const searchForm = document.querySelector('form[role="search"]');
+    if (searchForm) {
+      searchForm.addEventListener('submit', function(event) {
+        const searchInput = this.querySelector('input[type="search"]');
+        const query = searchInput?.value.trim();
+        
+        if (!query) {
+          event.preventDefault();
+          alert('Please enter a search term.');
+          return;
+        }
+        
+        // For now, redirect to blog page with search intent
+        // In a real implementation, this would go to a search results page
+        event.preventDefault();
+        window.location.href = `/blog?search=${encodeURIComponent(query)}`;
+      });
+    }
+
+    // Add some interactive feedback for buttons
+    const buttons = document.querySelectorAll('button, a[href]');
+    buttons.forEach(button => {
+      button.addEventListener('mouseenter', function(event) {
+        const target = event.currentTarget;
+        if (target instanceof HTMLElement) {
+          target.style.transform = 'translateY(-1px)';
+        }
+      });
+      
+      button.addEventListener('mouseleave', function(event) {
+        const target = event.currentTarget;
+        if (target instanceof HTMLElement) {
+          target.style.transform = 'translateY(0)';
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  /* 404 page specific styles */
+  main {
+    min-height: calc(100vh - 200px); /* Adjust based on header/footer height */
+  }
+  
+  /* Smooth animations */
+  .container > div {
+    animation: fadeInUp 0.6s ease-out;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Button hover effects */
+  button,
+  a[href] {
+    transition: all 0.2s ease-in-out;
+  }
+  
+  button:hover,
+  a[href]:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Search input focus styles */
+  input[type="search"]:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+    
+    h1 {
+      font-size: 4rem;
+    }
+    
+    .flex-col.sm\\:flex-row {
+      gap: 1rem;
+    }
+    
+    .flex-col.sm\\:flex-row > * {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  /* Accessibility improvements */
+  @media (prefers-reduced-motion: reduce) {
+    .container > div {
+      animation: none;
+    }
+    
+    button,
+    a[href] {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,10 @@
+# Redirects for Cloudflare Pages
+
+# Redirect old blog URLs (if any)
+# /old-blog/* /blog/:splat 301
+
+# Handle trailing slashes
+/blog/ /blog 301
+
+# 404 fallback
+/* /404.html 404

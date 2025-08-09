@@ -1,0 +1,257 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import BlogCard from '@/components/BlogCard.astro';
+import { getPublishedBlogPosts } from '@/utils/blog';
+import { SITE_CONFIG } from '@/config/site';
+
+// Fetch published blog posts
+const blogPosts = await getPublishedBlogPosts();
+
+// Get the most recent posts for the homepage (limit to 6)
+const recentPosts = blogPosts.slice(0, 6);
+
+// SEO data for homepage
+const seoData = {
+  title: SITE_CONFIG.title,
+  description: SITE_CONFIG.description,
+  type: 'website' as const,
+};
+---
+
+<BaseLayout {...seoData}>
+  <Header />
+  
+  <main id="main-content" class="flex-1">
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-primary-50 to-accent-50 py-16 sm:py-20">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto text-center">
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary-900 mb-6 text-balance">
+            Welcome to {SITE_CONFIG.title}
+          </h1>
+          <p class="text-xl sm:text-2xl text-primary-600 mb-8 leading-relaxed text-pretty max-w-3xl mx-auto">
+            {SITE_CONFIG.description}
+          </p>
+          
+          <!-- CTA Buttons -->
+          <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <a
+              href="/blog"
+              class="inline-flex items-center px-8 py-3 text-lg font-medium text-white bg-accent-600 rounded-lg hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl"
+            >
+              Read Latest Posts
+              <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </a>
+            <a
+              href="/about"
+              class="inline-flex items-center px-8 py-3 text-lg font-medium text-accent-600 bg-white border-2 border-accent-600 rounded-lg hover:bg-accent-50 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg"
+            >
+              About Me
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent Blog Posts Section -->
+    <section class="py-16 sm:py-20">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+          <!-- Section Header -->
+          <div class="text-center mb-12">
+            <h2 class="text-3xl sm:text-4xl font-bold text-primary-900 mb-4">
+              Latest Articles
+            </h2>
+            <p class="text-lg text-primary-600 max-w-2xl mx-auto">
+              Discover insights, tutorials, and thoughts on web development, technology, and more.
+            </p>
+          </div>
+
+          <!-- Blog Posts Grid -->
+          {recentPosts.length > 0 ? (
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+              {recentPosts.map((post) => (
+                <BlogCard post={post} />
+              ))}
+            </div>
+          ) : (
+            <!-- Empty State -->
+            <div class="text-center py-16">
+              <div class="max-w-md mx-auto">
+                <svg class="w-16 h-16 text-primary-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h3 class="text-xl font-semibold text-primary-900 mb-2">
+                  No posts yet
+                </h3>
+                <p class="text-primary-600">
+                  Check back soon for new content!
+                </p>
+              </div>
+            </div>
+          )}
+
+          <!-- View All Posts Link -->
+          {recentPosts.length > 0 && (
+            <div class="text-center">
+              <a
+                href="/blog"
+                class="inline-flex items-center px-6 py-3 text-base font-medium text-accent-600 bg-accent-50 rounded-lg hover:bg-accent-100 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 transition-all duration-200"
+              >
+                View All Posts
+                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+
+    <!-- Features/About Section -->
+    <section class="bg-primary-50 py-16 sm:py-20">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+          <div class="text-center mb-12">
+            <h2 class="text-3xl sm:text-4xl font-bold text-primary-900 mb-4">
+              What You'll Find Here
+            </h2>
+            <p class="text-lg text-primary-600 max-w-2xl mx-auto">
+              A collection of articles covering various topics in technology and development.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="text-center p-6">
+              <div class="w-16 h-16 bg-accent-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold text-primary-900 mb-2">
+                Technical Tutorials
+              </h3>
+              <p class="text-primary-600">
+                In-depth guides and tutorials on web development, programming languages, and modern frameworks.
+              </p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="text-center p-6">
+              <div class="w-16 h-16 bg-accent-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold text-primary-900 mb-2">
+                Insights & Ideas
+              </h3>
+              <p class="text-primary-600">
+                Thoughts on technology trends, best practices, and lessons learned from real-world projects.
+              </p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="text-center p-6">
+              <div class="w-16 h-16 bg-accent-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold text-primary-900 mb-2">
+                Learning Resources
+              </h3>
+              <p class="text-primary-600">
+                Curated resources, tools, and references to help you grow as a developer and stay updated.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  /* Homepage-specific styles */
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .text-pretty {
+    text-wrap: pretty;
+  }
+  
+  /* Smooth animations for hero section */
+  main section:first-child {
+    animation: fadeIn 0.8s ease-out;
+  }
+  
+  /* Staggered animation for blog cards */
+  .grid > * {
+    animation: slideUp 0.6s ease-out;
+  }
+  
+  .grid > *:nth-child(1) { animation-delay: 0.1s; }
+  .grid > *:nth-child(2) { animation-delay: 0.2s; }
+  .grid > *:nth-child(3) { animation-delay: 0.3s; }
+  .grid > *:nth-child(4) { animation-delay: 0.4s; }
+  .grid > *:nth-child(5) { animation-delay: 0.5s; }
+  .grid > *:nth-child(6) { animation-delay: 0.6s; }
+  
+  /* Feature cards hover effect */
+  .grid div:hover {
+    transform: translateY(-4px);
+    transition: transform 0.3s ease;
+  }
+  
+  /* Gradient background enhancement */
+  section:first-child {
+    background: linear-gradient(135deg, theme('colors.primary.50') 0%, theme('colors.accent.50') 100%);
+  }
+  
+  /* Button hover effects */
+  a[class*="bg-accent-600"]:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    .text-4xl {
+      font-size: 2.5rem;
+    }
+    
+    .text-xl {
+      font-size: 1.125rem;
+    }
+  }
+  
+  /* Accessibility improvements */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  
+  /* Focus styles for better accessibility */
+  a:focus {
+    outline: 2px solid theme('colors.accent.500');
+    outline-offset: 2px;
+  }
+</style>
