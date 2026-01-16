@@ -129,7 +129,7 @@ export function getCLS(callback: WebVitalCallback): void {
 
   try {
     let clsValue = 0;
-    let clsEntries: PerformanceEntry[] = [];
+    const clsEntries: PerformanceEntry[] = [];
     let metric: WebVitalMetric | undefined;
 
     const observer = new PerformanceObserver((list) => {
