@@ -2,6 +2,8 @@
 
 A modern, secure, and performant blog website built with Astro, TypeScript, and Tailwind CSS. Designed for deployment on Cloudflare Pages with a focus on security, accessibility, and SEO.
 
+<!-- Deployment test: 2026-01-16 -->
+
 ## 🚀 Features
 
 - **Modern Stack**: Built with Astro 4.x, TypeScript, and Tailwind CSS
